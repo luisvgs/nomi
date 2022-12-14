@@ -1,9 +1,8 @@
 import Main._
 
-class Interpreter(ast: List[Expr]) {
-  def interpret(): Value = eval(ast)
+class Interpreter(env: Environment) {
 
-  private def eval(exprs: Seq[Expr]): Value = {
+  def eval(exprs: List[Expr]): Value = {
     var res: Value = Nothing()
     exprs.foreach { expr =>
       res = stmt_eval(expr)
@@ -19,6 +18,16 @@ class Interpreter(ast: List[Expr]) {
 
   private def stmt_eval(expr: Expr): Value = expr match {
     case Number(x) => Integer(x)
+    case Assign(n, v) => {
+      val res = stmt_eval(v)
+      this.env.define(n,res)
+
+      Nothing()
+    }
+    case Variable(name) => this.env.resolve(name) match {
+      case Some(value) => value
+      case None => Nothing()
+    }
     case Bool(b) => Booli(b)
     case Binary(lhs: Expr, op: String, rhs: Expr) => {
       val x: Value = stmt_eval(lhs)

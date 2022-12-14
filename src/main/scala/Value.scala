@@ -18,6 +18,13 @@ sealed trait Value {
     }
 
   }
+  override def toString: String = {
+    this match {
+      case Nothing() => "Nothing"
+      case Integer(x) => x.toString
+      case Booli(b) => b.toString
+    }
+  }
 }
 case class Nothing() extends Value
 case class Booli(b: Boolean) extends Value
