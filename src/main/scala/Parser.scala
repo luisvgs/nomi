@@ -32,7 +32,7 @@ class Parser {
     P(expr_ ~ space ~ CharIn("+\\-").! ~ space ~ number).map(Binary.tupled)
   }
 
-  def statement[_: P]: P[_] = P((expr).rep)
+  def statement[_: P]: P[Seq[Expr]] = P((expr).rep)
 
   def expr_[_: P]: P[Expr] = {
     P(number | bool)

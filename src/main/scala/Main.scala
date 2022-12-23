@@ -19,8 +19,10 @@ object Main {
     var tokens: Array[String] = Array()
 
     //tokens = source.split("\\s+")
-    var p@Parsed.Success(_, _)= parse(source, new Parser().statement(_))
-    interpreter.eval(p)
+    val Parsed.Success(value, _)= parse(source, new Parser().statement(_))
+    val res = interpreter.eval(value)
+
+    println(res)
 /*
     var continue: Boolean = true
     while (continue) {

@@ -2,7 +2,7 @@ import Main._
 
 class Interpreter(env: Environment) {
 
-  def eval(exprs: List[Expr]): Value = {
+  def eval(exprs: Seq[Expr]): Value = {
     var res: Value = Nothing()
     exprs.foreach { expr =>
       res = stmt_eval(expr)
