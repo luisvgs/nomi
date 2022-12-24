@@ -6,8 +6,8 @@ object Main {
 
   def main(args: Array[String]): Unit = {
     args match {
-      case Array(file) => ???
-      case _ => run()
+      case Array(file) => runFromFile(file)
+      case _           => run()
     }
   }
 
@@ -19,7 +19,7 @@ object Main {
     // """
     var tokens: Array[String] = Array()
 
-    //tokens = source.split("\\s+")
+    // tokens = source.split("\\s+")
     // val Parsed.Success(value, _)= parse(source, new Parser().statement(_))
     // val res = interpreter.eval(value)
 
@@ -32,23 +32,12 @@ object Main {
       tokens = line.split("\\s+")
 
       if (line == ":q") continue = false
-      val Parsed.Success(value, _)= parse(line, new Parser().statement(_))
-      println(value)
+      val Parsed.Success(value, _) = parse(line, new Parser().statement(_))
       var res = interpreter.eval(value)
       println(res)
     }
 
   }
 
-  def runFromFile(file: String) = {
-    ???
-  }
-
-  sealed trait Operator
-
-  case object Plus extends Operator
-
-  case object Div extends Operator
-
-  case object Minus extends Operator
+  def runFromFile(file: String) = {}
 }
