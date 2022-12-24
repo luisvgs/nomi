@@ -9,6 +9,9 @@ class Parser {
   })
   )
 
+  def variable[_:P]: P[Expr] = P(identifier).!.map(Variable)
+  def assignment[_:P]: P[Expr] = P("let" ~ space ~ identifier.! ~ space ~ "=" ~ expr).map(Assign.tupled)
+
   def bool[_: P]: P[Expr] = {
     P(("true" | "false").rep(1).!.map(x => Bool {
       x.toBoolean
@@ -35,7 +38,7 @@ class Parser {
   def statement[_: P]: P[Seq[Expr]] = P((expr).rep)
 
   def expr_[_: P]: P[Expr] = {
-    P(number | bool)
+    P(number | bool | assignment )
   }
 
 }

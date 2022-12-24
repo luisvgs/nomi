@@ -15,15 +15,16 @@ object Main {
     import scala.collection.mutable.Map
     var env = new Environment(vals = Map.empty, enclosing = None)
     var interpreter = new Interpreter(env = env)
-    val source = "1 + 1"
+    // val source = """let foo = 12
+    // """
     var tokens: Array[String] = Array()
 
     //tokens = source.split("\\s+")
-    val Parsed.Success(value, _)= parse(source, new Parser().statement(_))
-    val res = interpreter.eval(value)
+    // val Parsed.Success(value, _)= parse(source, new Parser().statement(_))
+    // val res = interpreter.eval(value)
 
-    println(res)
-/*
+    // println(res)
+
     var continue: Boolean = true
     while (continue) {
       print("> ")
@@ -31,14 +32,12 @@ object Main {
       tokens = line.split("\\s+")
 
       if (line == ":q") continue = false
-      var p: List[Expr]= parse(line, new Parser().statement(_)) match {
-        case Parsed.Success(_,_) => _
-        case _ => _
-      }
-      println(p)
-      //var res = interpreter.eval(p)
+      val Parsed.Success(value, _)= parse(line, new Parser().statement(_))
+      println(value)
+      var res = interpreter.eval(value)
+      println(res)
     }
-*/
+
   }
 
   def runFromFile(file: String) = {

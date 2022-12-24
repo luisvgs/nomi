@@ -22,6 +22,7 @@ class Interpreter(env: Environment) {
       val res = stmt_eval(v)
       this.env.define(n,res)
 
+      println(s"defined ", n)
       Nothing()
     }
     case Variable(name) => this.env.resolve(name) match {
@@ -35,6 +36,7 @@ class Interpreter(env: Environment) {
       get_op(op) match {
        case Plus => x + y
        case Minus => x - y
+       case _ => ???
       }
     }
     case _ => ???
