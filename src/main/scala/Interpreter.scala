@@ -1,7 +1,6 @@
 import Main._
 
 class Interpreter(env: Environment) {
-
   def eval(exprs: Seq[Expr]): Value = {
     var res: Value = Nothing()
     exprs.foreach { expr =>
@@ -12,8 +11,12 @@ class Interpreter(env: Environment) {
 
   private def get_op(op: String): Operator = op match {
     case "+" => Plus
-    case "/" => Div
     case "-" => Minus
+    case "==" => Equal
+    case "||" => Or
+    case "<" => LessThan
+    case ">" => GreaterThan
+    case "&&" => And
   }
 
   private def stmt_eval(expr: Expr): Value = expr match {
@@ -37,7 +40,11 @@ class Interpreter(env: Environment) {
       get_op(op) match {
         case Plus  => x + y
         case Minus => x - y
-        case _     => ???
+        case LessThan => x < y
+        case GreaterThan => x > y
+        case And => x && y
+        case Or => x || y
+        case Equal => x == y
       }
     }
     case _ => ???
