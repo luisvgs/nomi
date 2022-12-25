@@ -9,6 +9,61 @@ sealed trait Value {
       case _ => ???
     }
   }
+  def ==(that: Value): Value = {
+    this match {
+      case Integer(x) =>
+        that match {
+          case Integer(y) => Booli(x == y)
+          case _          => ???
+        }
+      case _ => ???
+    }
+  }
+
+  def ||(that: Value): Value = {
+    this match {
+      case Booli(x) =>
+        that match {
+          case Booli(y) => Booli(x || y)
+          case _          => ???
+        }
+      case _ => ???
+    }
+  }
+
+  def <(that: Value): Value = {
+    this match {
+      case Integer(x) =>
+        that match {
+          case Integer(y) => Booli(x <= y)
+          case _          => ???
+        }
+      case _ => ???
+    }
+  }
+
+  def >(that: Value): Value = {
+    this match {
+      case Integer(x) =>
+        that match {
+          case Integer(y) => Booli(x >= y)
+          case _          => ???
+        }
+      case _ => ???
+    }
+  }
+
+  def &&(that: Value): Value = {
+    this match {
+      case Booli(x) =>
+        that match {
+          case Booli(y) => Booli(x && y)
+          case _          => ???
+        }
+      case _ => ???
+    }
+  }
+
   def -(that: Value): Value = {
     this match {
       case Integer(x) =>
@@ -20,6 +75,7 @@ sealed trait Value {
     }
 
   }
+
   override def toString: String = {
     this match {
       case Nothing()     => "Nothing"
