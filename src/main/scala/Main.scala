@@ -32,8 +32,8 @@ object Main {
     var env = new Environment(vals = Map.empty, enclosing = None)
     var interpreter = new Interpreter(env = env)
     val source = scala.io.Source.fromResource("input.nom").getLines()
-     val Parsed.Success(value, _)= parse(source, new Parser().statement(_))
-     val res = interpreter.eval(value)
+    val Parsed.Success(value, _) = parse(source, new Parser().statement(_))
+    val res = interpreter.eval(value)
 
     println(source)
   }
