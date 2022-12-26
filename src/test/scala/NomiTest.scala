@@ -27,8 +27,9 @@ class NomiTest extends AnyFunSuite {
     assert(a === Assign("foo", Number(32)))
   }
 
-  val Parsed.Success(fn, _) = parse("def foo :: a => 1 end", new Parser().fn_decl(_))
+  val Parsed.Success(fn, _) =
+    parse("def foo :: a => 1 + 4 end", new Parser().fn_decl(_))
   test("Function declaration") {
-    assert(fn === Func("foo", "a", List(Number(1))))
+    assert(fn === Func("foo", "a", List(Binary(Number(1), "+", Number(4)))))
   }
 }
