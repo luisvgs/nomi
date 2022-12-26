@@ -42,7 +42,6 @@ class Parser {
     )
   }
 
-
   def letter[_: P]: P[_] = CharIn("aA-zZ")
 
   def keyword[_: P]: P[_] = StringIn("let", "def")
@@ -51,13 +50,15 @@ class Parser {
     P(!keyword ~ letter.rep(1).! ~ End).map(Identifier)
   }
 
-  // def foo :: a, b, c => ... end
   def fn_decl[_: P]: P[Expr] = P(
-    StringIn("def") ~ space ~ letter.rep(1).! ~ space ~ "::" ~ space ~ letter.rep(1).! ~ space ~ "=>" ~ space ~ statement ~ space ~ "end"
+    StringIn("def") ~ space ~ letter.rep(1).! ~ space ~ "::" ~ space ~ letter
+      .rep(1)
+      .! ~ space ~ "=>" ~ space ~ statement ~ space ~ "end"
   ).map(Func.tupled)
 
   def factor[_: P]: P[Expr] = {
-    P(expr_ ~ space ~ CharIn("+\\-\\||\\&&\\<\\>\\==").! ~ space ~ number).map(Binary.tupled)
+    P(expr_ ~ space ~ CharIn("+\\-\\||\\&&\\<\\>\\==").! ~ space ~ number)
+      .map(Binary.tupled)
   }
 
   def statement[_: P]: P[Seq[Expr]] = P((expr).rep)
