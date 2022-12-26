@@ -25,7 +25,7 @@ sealed trait Value {
       case Booli(x) =>
         that match {
           case Booli(y) => Booli(x || y)
-          case _          => ???
+          case _        => ???
         }
       case _ => ???
     }
@@ -58,7 +58,7 @@ sealed trait Value {
       case Booli(x) =>
         that match {
           case Booli(y) => Booli(x && y)
-          case _          => ???
+          case _        => ???
         }
       case _ => ???
     }
@@ -82,6 +82,7 @@ sealed trait Value {
       case Integer(x)    => x.toString
       case Booli(b)      => b.toString
       case StrLiteral(s) => s
+      case Fn(_, _)      => "<fn>"
     }
   }
 }
@@ -89,3 +90,4 @@ case class Nothing() extends Value
 case class Booli(b: Boolean) extends Value
 case class Integer(x: Int) extends Value
 case class StrLiteral(s: String) extends Value
+case class Fn(args: String, stmt: Seq[Expr]) extends Value
