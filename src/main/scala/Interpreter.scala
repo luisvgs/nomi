@@ -10,18 +10,25 @@ class Interpreter(env: Environment) {
   }
 
   private def get_op(op: String): Operator = op match {
-    case "+" => Plus
-    case "-" => Minus
+    case "+"  => Plus
+    case "-"  => Minus
     case "==" => Equal
     case "||" => Or
-    case "<" => LessThan
-    case ">" => GreaterThan
+    case "<"  => LessThan
+    case ">"  => GreaterThan
     case "&&" => And
   }
 
   private def stmt_eval(expr: Expr): Value = expr match {
     case Number(x) => Integer(x)
     case Str(s)    => StrLiteral(s)
+    case Func(name, arg, stmt) => {
+      val fn = Fn(arg, stmt)
+
+      println(s"<fn>: ", name)
+      this.env.define(name, fn)
+      Nothing()
+    }
     case Assign(n, v) => {
       val res = stmt_eval(v)
       this.env.define(n, res)
@@ -38,13 +45,13 @@ class Interpreter(env: Environment) {
       val x: Value = stmt_eval(lhs)
       val y: Value = stmt_eval(rhs)
       get_op(op) match {
-        case Plus  => x + y
-        case Minus => x - y
-        case LessThan => x < y
+        case Plus        => x + y
+        case Minus       => x - y
+        case LessThan    => x < y
         case GreaterThan => x > y
-        case And => x && y
-        case Or => x || y
-        case Equal => x == y
+        case And         => x && y
+        case Or          => x || y
+        case Equal       => x == y
       }
     }
     case _ => ???
