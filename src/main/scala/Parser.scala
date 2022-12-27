@@ -61,6 +61,11 @@ class Parser {
       .map(Binary.tupled)
   }
 
+  def call[_: P]: P[Expr] = {
+    P(Start ~ letter.rep(1).! ~ "(" ~ statement ~ ")")
+      .map(Call.tupled)
+  }
+
   def statement[_: P]: P[Seq[Expr]] = P((expr).rep)
 
   def expr[_: P]: P[Expr] = {

@@ -7,7 +7,7 @@ case class Number(n: Int) extends Expr
 case class Bool(b: Boolean) extends Expr
 case class Binary(lhs: Expr, op: String, rhs: Expr) extends Expr
 case class Identifier(name: String) extends Expr
-case class Call(fn: Func) extends Expr
+case class Call(fn: String, stmt: Seq[Expr]) extends Expr
 
 sealed trait Operator
 case object Plus extends Operator

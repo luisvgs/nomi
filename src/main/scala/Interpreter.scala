@@ -1,6 +1,7 @@
 import Main._
+import scala.collection.mutable.ArrayBuffer
 
-class Interpreter(env: Environment) {
+class Interpreter(var env: Environment) {
   def eval(exprs: Seq[Expr]): Value = {
     var res: Value = Nothing()
     exprs.foreach { expr =>
@@ -19,6 +20,26 @@ class Interpreter(env: Environment) {
     case "&&" => And
   }
 
+  private def eval_block(stmts: Seq[Expr], env: Environment): Value = {
+    var value: Value = Nothing()
+    var prev = this.env
+
+    val steps = () => {
+      this.env = env
+
+      stmts.foreach { case stmt =>
+        value = stmt_eval(stmt)
+      }
+
+      value
+    }
+
+    val result = steps()
+    this.env = prev
+
+    result
+  }
+
   private def stmt_eval(expr: Expr): Value = expr match {
     case Number(x) => Integer(x)
     case Str(s)    => StrLiteral(s)
@@ -28,6 +49,35 @@ class Interpreter(env: Environment) {
       println(s"<fn>: ", name)
       this.env.define(name, fn)
       Nothing()
+    }
+    case Call(fn, stmt) => {
+      var values = ArrayBuffer[Value]()
+
+      stmt.foreach(x => {
+        values += stmt_eval(x)
+        values.toArray
+      })
+
+      val fn_defined = this.env.resolve(fn) match {
+        case Some(v) => v
+        case None => {
+          println("nop")
+          Nothing()
+        }
+      }
+
+      fn_defined match {
+        case Fn(args, stmt) => {
+          var environment = this.env.from_ref(this.env)
+
+          args.zip(values).foreach { case (param, argument) =>
+            environment.define(param.toString, argument)
+          }
+
+          eval_block(stmt, environment)
+        }
+        case _ => ???
+      }
     }
     case Assign(n, v) => {
       val res = stmt_eval(v)
