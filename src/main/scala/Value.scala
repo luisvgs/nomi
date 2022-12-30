@@ -82,7 +82,7 @@ sealed trait Value {
       case Integer(x)    => x.toString
       case Booli(b)      => b.toString
       case StrLiteral(s) => s
-      case Fn(_, _)      => "<fn>"
+      case Fn(name, _)   => "<fn>"
     }
   }
 }

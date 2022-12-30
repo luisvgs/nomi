@@ -5,7 +5,7 @@ class Interpreter(var env: Environment) {
   def eval(exprs: Seq[Expr]): Value = {
     var res: Value = Nothing()
     exprs.foreach { expr =>
-      res = stmt_eval(expr)
+      res = stmt_eval(expr).getOrElse(Nothing())
     }
     res
   }
@@ -20,7 +20,10 @@ class Interpreter(var env: Environment) {
     case "&&" => And
   }
 
-  private def eval_block(stmts: Seq[Expr], env: Environment): Value = {
+  private def eval_block(
+      stmts: Seq[Expr],
+      env: Environment
+  ): Either[String, Value] = {
     var value: Value = Nothing()
     var prev = this.env
 
@@ -28,7 +31,7 @@ class Interpreter(var env: Environment) {
       this.env = env
 
       stmts.foreach { case stmt =>
-        value = stmt_eval(stmt)
+        value = stmt_eval(stmt).getOrElse(Nothing())
       }
 
       value
@@ -37,24 +40,24 @@ class Interpreter(var env: Environment) {
     val result = steps()
     this.env = prev
 
-    result
+    Right(result)
   }
 
-  private def stmt_eval(expr: Expr): Value = expr match {
-    case Number(x) => Integer(x)
-    case Str(s)    => StrLiteral(s)
+  private def stmt_eval(expr: Expr): Either[String, Value] = expr match {
+    case Number(x) => Right(Integer(x))
+    case Str(s)    => Right(StrLiteral(s))
     case Func(name, arg, stmt) => {
       val fn = Fn(arg, stmt)
 
       println(s"<fn>: ", name)
       this.env.define(name, fn)
-      Nothing()
+      Right(Nothing())
     }
     case Call(fn, stmt) => {
       var values = ArrayBuffer[Value]()
 
       stmt.foreach(x => {
-        values += stmt_eval(x)
+        values += stmt_eval(x).getOrElse(Nothing())
         values.toArray
       })
 
@@ -80,28 +83,28 @@ class Interpreter(var env: Environment) {
       }
     }
     case Assign(n, v) => {
-      val res = stmt_eval(v)
+      val res: Value = stmt_eval(v).right.get
       this.env.define(n, res)
-      Nothing()
+      Right(Nothing())
     }
     case Identifier(name) =>
       this.env.resolve(name) match {
-        case Some(value) => value
-        case None        => Nothing()
+        case Some(value) => Right(value)
+        case None        => Left("Variable was not found in scope")
 
       }
-    case Bool(b) => Booli(b)
+    case Bool(b) => Right(Booli(b))
     case Binary(lhs: Expr, op: String, rhs: Expr) => {
-      val x: Value = stmt_eval(lhs)
-      val y: Value = stmt_eval(rhs)
+      val x: Value = stmt_eval(lhs).getOrElse(Nothing())
+      val y: Value = stmt_eval(rhs).getOrElse(Nothing())
       get_op(op) match {
-        case Plus        => x + y
-        case Minus       => x - y
-        case LessThan    => x < y
-        case GreaterThan => x > y
-        case And         => x && y
-        case Or          => x || y
-        case Equal       => x == y
+        case Plus        => Right(x + y)
+        case Minus       => Right(x - y)
+        case LessThan    => Right(x < y)
+        case GreaterThan => Right(x > y)
+        case And         => Right(x && y)
+        case Or          => Right(x || y)
+        case Equal       => Right(x == y)
       }
     }
     case _ => ???
