@@ -3,10 +3,11 @@ import scala.collection.mutable.ArrayBuffer
 
 class Interpreter(var env: Environment) {
   def eval(exprs: Seq[Expr]): Value = {
-    var res: Value = Nothing()
-    exprs.foreach { expr =>
+    var res: Value = Integer(3)
+    exprs.map (expr =>
       res = stmt_eval(expr).getOrElse(Nothing())
-    }
+    )
+    println(res)
     res
   }
 
@@ -31,7 +32,7 @@ class Interpreter(var env: Environment) {
       this.env = env
 
       stmts.foreach { case stmt =>
-        value = stmt_eval(stmt).getOrElse(Nothing())
+        value = stmt_eval(stmt).right.get
       }
 
       value
@@ -47,6 +48,7 @@ class Interpreter(var env: Environment) {
     case Number(x) => Right(Integer(x))
     case Str(s)    => Right(StrLiteral(s))
     case Func(name, arg, stmt) => {
+      println("Function eval")
       val fn = Fn(arg, stmt)
 
       println(s"<fn>: ", name)
@@ -54,6 +56,7 @@ class Interpreter(var env: Environment) {
       Right(Nothing())
     }
     case Call(fn, stmt) => {
+      println("call")
       var values = ArrayBuffer[Value]()
 
       stmt.foreach(x => {
@@ -64,7 +67,6 @@ class Interpreter(var env: Environment) {
       val fn_defined = this.env.resolve(fn) match {
         case Some(v) => v
         case None => {
-          println("nop")
           Nothing()
         }
       }

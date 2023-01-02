@@ -53,7 +53,7 @@ class Parser {
   def fn_decl[_: P]: P[Expr] = P(
     StringIn("def") ~ space ~ letter.rep(1).! ~ space ~ "::" ~ space ~ letter
       .rep(1)
-      .! ~ space ~ "=>" ~ space ~ statement ~ space ~ "end"
+      .! ~ space ~ "=>" ~ space ~ statement ~ End
   ).map(Func.tupled)
 
   def factor[_: P]: P[Expr] = {
@@ -62,7 +62,7 @@ class Parser {
   }
 
   def call[_: P]: P[Expr] = {
-    P(Start ~ letter.rep(1).! ~ "(" ~ statement ~ ")")
+    P(letter.rep(1).! ~ "(" ~ statement ~ ")")
       .map(Call.tupled)
   }
 
