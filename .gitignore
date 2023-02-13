@@ -4,3 +4,4 @@ target/
 .bloop/
 .idea/
 metals.sbt
+.scala-build/

@@ -45,6 +45,7 @@ class Parser {
   def letter[_: P]: P[_] = CharIn("aA-zZ")
 
   def keyword[_: P]: P[_] = StringIn("let", "def")
+  def operator[_: P]: P[_] = CharIn("+\\-\\||\\&&\\<\\>\\==")
 
   def identifier[_: P]: P[Expr] = {
     P(!keyword ~ letter.rep(1).! ~ End).map(Identifier)
@@ -69,7 +70,7 @@ class Parser {
   def statement[_: P]: P[Seq[Expr]] = P((expr).rep)
 
   def expr[_: P]: P[Expr] = {
-    P(factor | expr_ | fn_decl)
+    P(factor | expr_)
   }
 
   def expr_[_: P]: P[Expr] = {

@@ -1,9 +1,11 @@
+//> using scala "2"
+//> using lib "com.lihaoyi::fastparse:2.2.2"
+//
 object Main {
   import scala.io.Source.fromFile
   import fastparse._
   import scala.io.StdIn.readLine
   import scala.collection.mutable.Map
-
   def main(args: Array[String]): Unit = {
     args match {
       case Array(file) => runFromFile(file)

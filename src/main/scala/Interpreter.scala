@@ -2,13 +2,14 @@ import Main._
 import scala.collection.mutable.ArrayBuffer
 
 class Interpreter(var env: Environment) {
-  def eval(exprs: Seq[Expr]): Value = {
-    var res: Value = Integer(3)
-    exprs.map (expr =>
-      res = stmt_eval(expr).getOrElse(Nothing())
-    )
-    println(res)
-    res
+  def eval(exprs: Seq[Expr]): Either[String, Value] = {
+    var res: Either[String, Value] = Right(Nothing());
+    exprs.map(expr => res = stmt_eval(expr))
+
+    res match {
+      case Left(e)  => Left(e)
+      case Right(v) => Right(v)
+    }
   }
 
   private def get_op(op: String): Operator = op match {
@@ -90,6 +91,7 @@ class Interpreter(var env: Environment) {
       Right(Nothing())
     }
     case Identifier(name) =>
+      println("Identifier: ", name)
       this.env.resolve(name) match {
         case Some(value) => Right(value)
         case None        => Left("Variable was not found in scope")
