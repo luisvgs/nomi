@@ -6,6 +6,7 @@ object Main {
   import fastparse._
   import scala.io.StdIn.readLine
   import scala.collection.mutable.Map
+
   def main(args: Array[String]): Unit = {
     args match {
       case Array(file) => runFromFile(file)
@@ -24,7 +25,7 @@ object Main {
 
       if (line == ":q") continue = false
       val Parsed.Success(value, _) = parse(line, new Parser().statement(_))
-      var res = interpreter.eval(value)
+      var res = interpreter.eval(value).fold(e => e, r => r)
       println(res)
     }
 

@@ -7,8 +7,8 @@ class Interpreter(var env: Environment) {
     exprs.map(expr => res = stmt_eval(expr))
 
     res match {
-      case Left(e)  => Left(e)
       case Right(v) => Right(v)
+      case Left(e)  => Left(e)
     }
   }
 
@@ -57,7 +57,7 @@ class Interpreter(var env: Environment) {
       Right(Nothing())
     }
     case Call(fn, stmt) => {
-      println("call")
+      println("fn call. params: ", fn, stmt)
       var values = ArrayBuffer[Value]()
 
       stmt.foreach(x => {
@@ -82,7 +82,7 @@ class Interpreter(var env: Environment) {
 
           eval_block(stmt, environment)
         }
-        case _ => ???
+        case _ => Left("Que verga")
       }
     }
     case Assign(n, v) => {

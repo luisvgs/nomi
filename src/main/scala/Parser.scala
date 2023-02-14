@@ -70,7 +70,7 @@ class Parser {
   def statement[_: P]: P[Seq[Expr]] = P((expr).rep)
 
   def expr[_: P]: P[Expr] = {
-    P(factor | expr_)
+    P(factor | expr_ | fn_decl | call)
   }
 
   def expr_[_: P]: P[Expr] = {
