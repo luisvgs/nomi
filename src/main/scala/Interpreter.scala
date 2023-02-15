@@ -49,18 +49,15 @@ class Interpreter(var env: Environment) {
     case Number(x) => Right(Integer(x))
     case Str(s)    => Right(StrLiteral(s))
     case Func(name, arg, stmt) => {
-      println("Function eval")
       val fn = Fn(arg, stmt)
 
-      println(s"<fn>: ", name)
       this.env.define(name, fn)
       Right(Nothing())
     }
-    case Call(fn, stmt) => {
-      println("fn call. params: ", fn, stmt)
+    case Call(fn, args) => {
       var values = ArrayBuffer[Value]()
 
-      stmt.foreach(x => {
+      args.foreach(x => {
         values += stmt_eval(x).getOrElse(Nothing())
         values.toArray
       })
@@ -91,7 +88,6 @@ class Interpreter(var env: Environment) {
       Right(Nothing())
     }
     case Identifier(name) =>
-      println("Identifier: ", name)
       this.env.resolve(name) match {
         case Some(value) => Right(value)
         case None        => Left("Variable was not found in scope")
