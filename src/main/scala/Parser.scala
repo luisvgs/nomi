@@ -24,7 +24,6 @@ class Parser {
       )
   )
 
-  // def variable[_: P]: P[Expr] = P(AnyChar("aA-zZ").rep.!.map(Variable))
   def assignment[_: P]: P[Expr] =
     P("let" ~ space ~ letter.rep(1).! ~ space ~ "=" ~ space ~ expr ~ End)
       .map(Assign.tupled)
@@ -48,7 +47,7 @@ class Parser {
   def operator[_: P]: P[_] = CharIn("+\\-\\||\\&&\\<\\>\\==")
 
   def identifier[_: P]: P[Expr] = {
-    P(!keyword ~ letter.rep(1).! ~ End).map(Identifier)
+    P(!keyword ~ letter.rep(1).!).map(Identifier)
   }
 
   def fn_decl[_: P]: P[Expr] = P(
@@ -57,10 +56,31 @@ class Parser {
       .! ~ space ~ "::" ~ space ~ letter.rep.! ~ space ~ "=>" ~ space ~ statement ~ End
   ).map(Func.tupled)
 
-  def factor[_: P]: P[Expr] = {
-    P(expr_ ~ space ~ CharIn("+\\-\\||\\&&\\<\\>\\==").! ~ space ~ number)
-      .map(Binary.tupled)
+  def reify(operand: Expr, rest: Seq[(String, Expr)]): Expr = {
+    rest match {
+      case Nil => operand
+      case (op, other) :: xs =>
+        Binary(operand, op, reify(other, xs))
+    }
   }
+
+  def factor[_: P]: P[Expr] = {
+    P(primary ~ space ~ (CharIn("+").! ~ space ~ primary).rep)
+      .map { case (op, rest) =>
+        reify(op, rest)
+      }
+  }
+  // def factor[_: P]: P[Expr] = {
+  //   P(primary ~ (CharIn("+").! ~ space ~ primary).rep)
+  //     .map {
+  //       case (lhs, rhs) =>
+  //         rhs match {
+  //           case Nil               => lhs
+  //           case (op, other) :: xs => Binary(lhs, op, other)
+  //         }
+  //       case (lhs, _) => lhs
+  //     }
+  // }
 
   def call[_: P]: P[Expr] = {
     P(letter.rep(1).! ~ "(" ~ statement ~ ")")
@@ -70,10 +90,14 @@ class Parser {
   def statement[_: P]: P[Seq[Expr]] = P((expr).rep)
 
   def expr[_: P]: P[Expr] = {
-    P(factor | expr_ | fn_decl | call)
+    P(equality | fn_decl | call | assignment)
   }
 
-  def expr_[_: P]: P[Expr] = {
-    P(number | bool | identifier | assignment)
+  def equality[_: P]: P[Expr] = {
+    P(factor)
+  }
+
+  def primary[_: P]: P[Expr] = {
+    P(number | bool | identifier)
   }
 }
