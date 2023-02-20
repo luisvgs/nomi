@@ -12,6 +12,11 @@ class NomiTest extends AnyFunSuite {
     assert(t === Bool(true))
   }
 
+  val Parsed.Success(l, _) = parse("3 < 10", new Parser().comparison(_))
+  test("3 less than 10") {
+    assert(l === Binary(Number(3), "<", Number(10)))
+  }
+
   val Parsed.Success(f, _) = parse("false", new Parser().bool(_))
   test("false should be boolean") {
     assert(f === Bool(false))
@@ -28,8 +33,14 @@ class NomiTest extends AnyFunSuite {
   }
 
   val Parsed.Success(fn, _) =
-    parse("def foo :: a => 1 + 4 end", new Parser().fn_decl(_))
+    parse("def foo :: a => 1 + 4", new Parser().fn_decl(_))
   test("Function declaration") {
     assert(fn === Func("foo", "a", List(Binary(Number(1), "+", Number(4)))))
+  }
+
+  val Parsed.Success(fn_, _) =
+    parse("foo(10)", new Parser().call(_))
+  test("Funcion call") {
+    assert(fn_ === Call("foo", List(Number(10))))
   }
 }

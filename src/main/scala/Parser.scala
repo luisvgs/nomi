@@ -70,34 +70,37 @@ class Parser {
         reify(op, rest)
       }
   }
-  // def factor[_: P]: P[Expr] = {
-  //   P(primary ~ (CharIn("+").! ~ space ~ primary).rep)
-  //     .map {
-  //       case (lhs, rhs) =>
-  //         rhs match {
-  //           case Nil               => lhs
-  //           case (op, other) :: xs => Binary(lhs, op, other)
-  //         }
-  //       case (lhs, _) => lhs
-  //     }
-  // }
 
   def call[_: P]: P[Expr] = {
-    P(letter.rep(1).! ~ "(" ~ statement ~ ")")
+    P(identifier.! ~ "(" ~ statement ~ ")")
       .map(Call.tupled)
   }
 
   def statement[_: P]: P[Seq[Expr]] = P((expr).rep)
 
   def expr[_: P]: P[Expr] = {
-    P(equality | fn_decl | call | assignment)
+    P(equality | fn_decl | call | assignment | identifier)
   }
 
   def equality[_: P]: P[Expr] = {
+    P(comparison ~ space ~ (CharIn("==\\||").! ~ space ~ comparison).rep)
+      .map { case (op, rest) =>
+        reify(op, rest)
+      }
+  }
+
+  def comparison[_: P]: P[Expr] = {
+    P(term ~ space ~ (CharIn(">\\<").! ~ space ~ term).rep)
+      .map { case (op, rest) =>
+        reify(op, rest)
+      }
+  }
+
+  def term[_: P]: P[Expr] = {
     P(factor)
   }
 
   def primary[_: P]: P[Expr] = {
-    P(number | bool | identifier)
+    P(number | bool)
   }
 }

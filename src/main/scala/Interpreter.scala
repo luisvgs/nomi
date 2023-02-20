@@ -90,13 +90,13 @@ class Interpreter(var env: Environment) {
     case Identifier(name) =>
       this.env.resolve(name) match {
         case Some(value) => Right(value)
-        case None        => Left("Variable was not found in scope")
+        case None        => Left(s"[error]: $name was not found in scope.")
 
       }
     case Bool(b) => Right(Booli(b))
     case Binary(lhs: Expr, op: String, rhs: Expr) => {
-      val x: Value = stmt_eval(lhs).getOrElse(Nothing())
-      val y: Value = stmt_eval(rhs).getOrElse(Nothing())
+      val x: Value = stmt_eval(lhs).toOption.get
+      val y: Value = stmt_eval(rhs).toOption.get
       get_op(op) match {
         case Plus        => Right(x + y)
         case Minus       => Right(x - y)
