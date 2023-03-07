@@ -65,7 +65,7 @@ class Parser {
   }
 
   def factor[_: P]: P[Expr] = {
-    P(primary ~ space ~ (CharIn("+").! ~ space ~ primary).rep)
+    P(primary ~ (space ~ CharIn("+").! ~ space ~ primary).rep)
       .map { case (op, rest) =>
         reify(op, rest)
       }
@@ -83,14 +83,18 @@ class Parser {
   }
 
   def equality[_: P]: P[Expr] = {
-    P(comparison ~ space ~ (CharIn("==\\||").! ~ space ~ comparison).rep)
+    P(
+      comparison ~ (space ~ CharIn(
+        "=="
+      ).! ~ space ~ comparison).rep
+    )
       .map { case (op, rest) =>
         reify(op, rest)
       }
   }
 
   def comparison[_: P]: P[Expr] = {
-    P(term ~ space ~ (CharIn(">\\<").! ~ space ~ term).rep)
+    P(term ~ (space ~ CharIn(">\\<").! ~ space ~ term).rep)
       .map { case (op, rest) =>
         reify(op, rest)
       }

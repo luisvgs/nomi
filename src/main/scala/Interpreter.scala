@@ -88,6 +88,7 @@ class Interpreter(var env: Environment) {
       Right(Nothing())
     }
     case Identifier(name) =>
+      println(s"identifier here $name")
       this.env.resolve(name) match {
         case Some(value) => Right(value)
         case None        => Left(s"[error]: $name was not found in scope.")
@@ -95,6 +96,7 @@ class Interpreter(var env: Environment) {
       }
     case Bool(b) => Right(Booli(b))
     case Binary(lhs: Expr, op: String, rhs: Expr) => {
+      println(s"Binary here: $lhs and $rhs")
       val x: Value = stmt_eval(lhs).toOption.get
       val y: Value = stmt_eval(rhs).toOption.get
       get_op(op) match {

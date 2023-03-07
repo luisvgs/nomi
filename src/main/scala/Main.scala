@@ -1,5 +1,5 @@
 //> using scala "2"
-//> using lib "com.lihaoyi::fastparse:2.2.2"
+//> using lib "com.lihaoyi::fastparse:2.3.3"
 //
 object Main {
   import scala.io.Source.fromFile
@@ -19,7 +19,7 @@ object Main {
     var interpreter = new Interpreter(env = env)
     var continue: Boolean = true
     while (continue) {
-      print("> ")
+      print("~:> ")
       var line: String = readLine()
       line.split("\\s+")
 
